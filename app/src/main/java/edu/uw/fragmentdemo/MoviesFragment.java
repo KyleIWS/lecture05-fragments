@@ -59,7 +59,7 @@ public class MoviesFragment extends Fragment {
         try {
             callback = (OnMovieSelectedListener)context;
         }catch(ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnMovieSelectedListend");
+            throw new ClassCastException(context.toString() + " must implement OnMovieSelectedListener");
         }
 
     }
