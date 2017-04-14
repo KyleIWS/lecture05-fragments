@@ -1,11 +1,14 @@
 package edu.uw.fragmentdemo;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Button;
 
 
 /**
@@ -15,6 +18,11 @@ import android.view.ViewGroup;
  */
 public class SearchFragment extends Fragment {
 
+    private searchListener callback;
+
+    public interface searchListener {
+        public void onSearched(String term);
+    }
 
     public SearchFragment() {
         // Required empty public constructor
@@ -22,18 +30,21 @@ public class SearchFragment extends Fragment {
 
     public static SearchFragment newInstance() {
 
-
+        Bundle args = new Bundle();
+        
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            callback = (searchListener) context;
+        } catch(ClassCastException exc) {
+            throw new ClassCastException("Must implement searchListener in context");
         }
     }
 
@@ -41,7 +52,20 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        View view =  inflater.inflate(R.layout.fragment_search, container, false);
+
+        final EditText text = (EditText) view.findViewById(R.id.txtSearch);
+        Button button = (Button) view.findViewById(R.id.btnSearch);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searched = text.getText().toString();
+                callback.onSearched(searched);
+            }
+        });
+
+        return view;
     }
 
 }
